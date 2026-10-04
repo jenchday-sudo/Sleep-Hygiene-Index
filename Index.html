@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sleep Hygiene Self-Assessment</title>
+<style>
+:root{--bg:#eef1f6;--card:#fff;--ink:#1b2433;--muted:#4b5668;--line:#cfd6e2;--accent:#0f5f6b;--accent-soft:#dcedf0;--warn:#8a4b00;--warn-soft:#fdf0dc}
+@media (prefers-color-scheme:dark){:root{--bg:#121826;--card:#1b2436;--ink:#e8ecf4;--muted:#aab4c6;--line:#34405a;--accent:#7cc7d3;--accent-soft:#1f3a44;--warn:#f0b968;--warn-soft:#3b2d17}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 64px}
+h1,h2{font-family:Georgia,"Iowan Old Style",serif;line-height:1.2}
+h1{font-size:2rem;margin:.2em 0 .3em}
+h2{font-size:1.35rem;margin:1.4em 0 .4em}
+p{margin:.5em 0;max-width:68ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:14px 0}
+.note{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:6px;padding:10px 14px;margin:14px 0}
+fieldset{border:1px solid var(--line);border-radius:10px;background:var(--card);margin:12px 0;padding:12px 16px 14px}
+legend{font-weight:600;padding:0;margin:0 0 10px;float:left;width:100%}
+legend+.opts{clear:both}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.opts label{flex:1 1 110px;text-align:center;border:1.5px solid var(--line);border-radius:8px;padding:8px 6px;cursor:pointer;position:relative}
+.opts input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.opts label:has(input:checked){background:var(--accent);border-color:var(--accent);color:#fff}
+@media (prefers-color-scheme:dark){.opts label:has(input:checked){color:#0b1a1f}}
+.opts label:has(input:focus-visible){outline:3px solid var(--ink);outline-offset:2px}
+.opts label:hover{border-color:var(--accent)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:6px 0 2px}
+.bar>div{height:100%;background:var(--accent);width:0;transition:width .2s}
+button{font:inherit;border-radius:8px;padding:10px 18px;border:1.5px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;margin:6px 8px 6px 0}
+@media (prefers-color-scheme:dark){button{color:#0b1a1f}}
+button.alt{background:transparent;color:var(--accent)}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.score{font-family:Georgia,serif;font-size:3rem;line-height:1}
+.scale{position:relative;height:14px;border-radius:7px;margin:14px 0 4px;background:linear-gradient(90deg,#4f9d8c 0 25%,#b9c06a 25% 50%,#e3a54a 50% 75%,#c8665a 75% 100%)}
+.scale i{position:absolute;top:-5px;width:6px;height:24px;background:var(--ink);border-radius:3px;transform:translateX(-3px)}
+.ticks{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted)}
+.tip{border-left:4px solid var(--warn);background:var(--warn-soft);padding:8px 12px;border-radius:6px;margin:10px 0}
+.tip b{display:block}
+.good{border-left-color:var(--accent);background:var(--accent-soft)}
+.ref{padding-left:2em;text-indent:-2em}
+.sr{position:absolute;left:-9999px}
+[hidden]{display:none!important}
+@media print{.noprint{display:none!important}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<main>
+<h1>Sleep hygiene self-assessment</h1>
+<p>Sleep hygiene means the everyday habits and surroundings that help (or hurt) your sleep. This short check-in uses the 13-item Sleep Hygiene Index (Mastin et al., 2006) to show which of your habits may be working against you.</p>
+<div class="note"><strong>How to answer:</strong> for each statement, choose how often it describes you <em>generally</em>. There are no right or wrong answers. Your responses stay on this page and are not stored or sent anywhere.</div>
+
+<div id="form" class="noprint">
+  <div aria-live="polite"><div class="bar" aria-hidden="true"><div id="pb"></div></div><span id="pt" style="color:var(--muted);font-size:.9rem">0 of 13 answered</span></div>
+  <div id="qs"></div>
+  <p id="err" role="alert" style="color:var(--warn);font-weight:600" hidden></p>
+  <button id="go" type="button">See my results</button>
+  <button id="clr" type="button" class="alt">Clear answers</button>
+</div>
+
+<section id="res" hidden aria-labelledby="rt" tabindex="-1">
+  <h2 id="rt">Your results</h2>
+  <div class="card">
+    <div class="score"><span id="tot"></span><span style="font-size:1.2rem;color:var(--muted)"> / 52</span></div>
+    <p><strong id="band"></strong></p>
+    <div class="scale" aria-hidden="true"><i id="mark"></i></div>
+    <div class="ticks" aria-hidden="true"><span>0 fewer problem habits</span><span>52 more problem habits</span></div>
+    <p id="bandtxt"></p>
+  </div>
+  <h2>Habits to look at first</h2>
+  <div id="tips"></div>
+  <h2>How to read this score</h2>
+  <div class="card">
+    <p>Each item is scored Never = 0, Rarely = 1, Sometimes = 2, Frequently = 3, Always = 4, and the items are summed. <strong>Higher scores mean poorer sleep hygiene.</strong></p>
+    <p>The four ranges above (0–13, 14–26, 27–39, 40–52) are simple, evenly spaced groupings used here for teaching. They are <strong>not</strong> validated clinical cut-offs, and the Sleep Hygiene Index does not diagnose a sleep disorder. Treat your score as a prompt for reflection, and compare it with your own earlier scores rather than with other people's.</p>
+    <p>If you have ongoing trouble falling or staying asleep, or you feel very sleepy during the day despite good habits, speak with a doctor or your university health or counselling service.</p>
+  </div>
+  <div class="noprint"><button id="print" type="button">Print or save as PDF</button><button id="back" type="button" class="alt">Change my answers</button></div>
+</section>
+
+<h2>Reference</h2>
+<p class="ref">Mastin, D. F., Bryson, J., &amp; Corwyn, R. (2006). Assessment of sleep hygiene using the Sleep Hygiene Index. <em>Journal of Behavioral Medicine, 29</em>(3), 223–227. <a href="https://doi.org/10.1007/s10865-006-9047-6">https://doi.org/10.1007/s10865-006-9047-6</a></p>
+</main>
+
+<script>
+const OPT=["Never","Rarely","Sometimes","Frequently","Always"];
+const Q=[
+["I take daytime naps lasting two or more hours.","Long naps eat into the sleep pressure you build up for the night. If you need a nap, keep it under about 30 minutes and finish it by mid-afternoon."],
+["I go to bed at different times from day to day.","A steady bedtime helps your body clock predict when to wind down. Aim to keep bedtime within about an hour across the week, including weekends."],
+["I get out of bed at different times from day to day.","A consistent wake time is often the strongest anchor for your body clock. Try fixing a wake time first and let bedtime follow."],
+["I exercise to the point of sweating within 1 hour of going to bed.","Exercise supports sleep, but hard exercise right before bed can leave you alert and warm. Move intense sessions earlier, and keep late exercise gentle."],
+["I stay in bed longer than I should two or three times a week.","Lingering in bed, awake or dozing, weakens the link between bed and sleep. Get up at your planned time and save lie-ins for rare occasions."],
+["I use alcohol, tobacco, or caffeine within 4 hours of going to bed or after going to bed.","Caffeine and nicotine are stimulants, and alcohol fragments sleep later in the night even if it helps you nod off. Set a cut-off several hours before bed."],
+["I do something that may wake me up before bedtime (for example: play video games, use the internet, or clean).","Stimulating activities keep your mind and body switched on. Build a 30–60 minute wind-down of low-key activities and put screens away earlier."],
+["I go to bed feeling stressed, angry, upset, or nervous.","Going to bed wound up makes sleep harder. Try a short wind-down such as slow breathing, stretching, or jotting down what's on your mind earlier in the evening."],
+["I use my bed for things other than sleeping or sex (for example: watch television, read, eat, or study).","Using your bed only for sleep strengthens the association between bed and sleeping. Study, eat, and watch shows elsewhere where you can."],
+["I sleep on an uncomfortable bed (for example: poor mattress or pillow, too much or not enough blankets).","Physical comfort matters. Adjust bedding and pillows to suit the temperature, and consider whether a pillow or topper could help within your budget."],
+["I sleep in an uncomfortable bedroom (for example: too bright, too stuffy, too hot, too cold, or too noisy).","Aim for a dark, quiet, cool, ventilated room. Eye masks, earplugs, a fan, or heavier curtains are low-cost fixes."],
+["I do important work before bedtime (for example: pay bills, schedule, or study).","Demanding or high-stakes tasks can keep your mind racing. Set a 'work stops' time and leave the last hour before bed for easier activities."],
+["I think, plan, or worry when I am in bed.","Bed becomes a place for thinking rather than sleeping. Try a 'worry list' earlier in the evening, and if you're still awake and alert after a while, get up and do something calm until you feel sleepy."]
+];
+const BANDS=[
+[13,"Mostly supportive habits","Few of the habits measured here are working against your sleep. Keep them going, and look at any items you rated Frequently or Always below."],
+[26,"Some habits to tidy up","You have a mix of helpful and unhelpful habits. Choosing one or two of the items below and changing them for a couple of weeks is a realistic place to start."],
+[39,"Several habits working against your sleep","A number of everyday habits may be making sleep harder. Pick the one or two that feel most changeable, and make small, steady changes rather than overhauling everything at once."],
+[52,"Many habits working against your sleep","Many habits measured here may be getting in the way of sleep. Start with one change, such as a consistent wake time, and build from there. If sleep problems persist, consider talking to a health professional."]
+];
+const $=id=>document.getElementById(id), qs=$("qs");
+Q.forEach((q,i)=>{
+  const f=document.createElement("fieldset");
+  f.innerHTML='<legend>'+(i+1)+'. '+q[0]+'</legend><div class="opts">'+OPT.map((o,v)=>'<label><input type="radio" name="q'+i+'" value="'+v+'"><span>'+o+'</span></label>').join("")+'</div>';
+  qs.appendChild(f);
+});
+function answers(){return Q.map((_,i)=>{const c=document.querySelector('input[name="q'+i+'"]:checked');return c?+c.value:null})}
+function progress(){const n=answers().filter(a=>a!==null).length;$("pb").style.width=(n/13*100)+"%";$("pt").textContent=n+" of 13 answered";$("err").hidden=true}
+qs.addEventListener("change",progress);
+$("go").onclick=()=>{
+  const a=answers(), miss=a.indexOf(null);
+  if(miss>-1){const e=$("err");e.textContent="Please answer all 13 statements. Next unanswered: statement "+(miss+1)+".";e.hidden=false;qs.children[miss].querySelector("input").focus();return}
+  const t=a.reduce((x,y)=>x+y,0), b=BANDS.find(b=>t<=b[0]);
+  $("tot").textContent=t;$("band").textContent=b[1];$("bandtxt").textContent=b[2];
+  $("mark").style.left=(t/52*100)+"%";
+  const hi=a.map((v,i)=>[v,i]).filter(x=>x[0]>=3).sort((x,y)=>y[0]-x[0]);
+  $("tips").innerHTML=hi.length?hi.map(([v,i])=>'<div class="tip"><b>'+Q[i][0].replace(/ \(.*?\)/,"")+' <span style="font-weight:400">(you answered: '+OPT[v]+')</span></b>'+Q[i][1]+'</div>').join(""):'<div class="tip good"><b>Nothing rated Frequently or Always.</b>None of these habits come up often for you. Keep them up.</div>';
+  $("form").hidden=true;$("res").hidden=false;$("res").focus();$("res").scrollIntoView();
+};
+$("clr").onclick=()=>{document.querySelectorAll("input:checked").forEach(i=>i.checked=false);progress()};
+$("back").onclick=()=>{$("res").hidden=true;$("form").hidden=false;window.scrollTo(0,0)};
+$("print").onclick=()=>window.print();
+</script>
+</body>
+</html>
